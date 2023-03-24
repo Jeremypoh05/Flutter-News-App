@@ -31,10 +31,9 @@ dependencies:
   flutter:
     sdk: flutter
 
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  shared_preferences: ^2.0.20 # is a plugin in Flutter that allows you to store data in the form of key-value pairs on the device. The data is stored persistently, meaning that it will still be available even if the app is closed or the device is restarted.
+  provider: ^6.0.5 #state management library that allows you to easily manage the state of your application.(stores and provides you with state or data)
 
 dev_dependencies:
   flutter_test:
