@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // managing the user's preference for the dark theme using the shared_preferences package.
 
 
-class DarkThemePrefs {
+class ThemePreferences {
   static const THEME_STATUS = "THEMESTATUS";
   //this method used to set the value of the dark theme preference.
   //value as an argument, which represents whether the dark theme is enabled or not.

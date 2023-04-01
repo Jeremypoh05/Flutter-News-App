@@ -1,8 +1,15 @@
+//Packages
 import 'package:flutter/material.dart';
-import 'package:news_app/consts/theme_data.dart';
-import 'package:news_app/provider/dark_theme_provider.dart';
-import 'package:news_app/screens/home_screen.dart';
+import 'package:news_app/inner_screens/blog_details.dart';
 import 'package:provider/provider.dart';
+
+//Consts
+import 'package:news_app/consts/theme_data.dart';
+
+//Providers
+import 'package:news_app/provider/theme_provider.dart';
+//screens
+import 'package:news_app/screens/home_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,17 +23,18 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  DarkThemeProvider themeChangeProvider = DarkThemeProvider();
-
-  void getCurrentAppTheme() async {
-    themeChangeProvider.setDarkTheme =
-        await themeChangeProvider.darkThemePrefs.getTheme();
-  }
+  ThemeProvider themeChangeProvider = ThemeProvider();
 
   @override
   void initState() {
     getCurrentAppTheme();
     super.initState();
+  }
+
+  //fetch the current theme
+  void getCurrentAppTheme() async {
+    themeChangeProvider.setDarkTheme =
+        await themeChangeProvider.darkThemePrefs.getTheme();
   }
 
   @override
@@ -43,13 +51,16 @@ class _MyAppState extends State<MyApp> {
       //Consumer widget listens to the changes in the app's state and
       // rebuilds the UI whenever there is a change in the state.
       // Here, it rebuilds the MaterialApp widget whenever the app theme changes.
-      Consumer<DarkThemeProvider>(builder: (context, themeProvider, child) {
+      Consumer<ThemeProvider>(builder: (context, themeProvider, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           //hide the initial app banner on screen
-          title: 'Flutter Demo',
+          title: 'News App',
           theme: Styles.themeData(themeProvider.getDarkTheme, context), //property that sets the app's theme based on the value returned from the getCurrentAppTheme() method.
-          home: HomeScreen(), //sets the default home screen of the app to HomeScreen().
+          home: const HomeScreen(), //sets the default home screen of the app to HomeScreen().
+          routes: {
+            NewsDetailsScreen.routeName: (context)=> const NewsDetailsScreen(),
+          },
         );
       }),
     );

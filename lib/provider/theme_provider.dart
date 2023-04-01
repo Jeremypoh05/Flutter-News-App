@@ -4,8 +4,8 @@ import 'package:news_app/services/dark_theme_prefs.dart';
 //manage the user's preference for the dark theme using the DarkThemePrefs class, and to notify any interested widgets of changes in the preference.
 
 //this ChangeNotifier will always keep listening to the changes
-class DarkThemeProvider with ChangeNotifier {
-  DarkThemePrefs darkThemePrefs = DarkThemePrefs();
+class ThemeProvider with ChangeNotifier {
+  ThemePreferences darkThemePrefs = ThemePreferences();
   bool _darkTheme = false; //represents the dark theme is currently false
   bool get getDarkTheme => _darkTheme; //returns the value of _darkTheme.
 
