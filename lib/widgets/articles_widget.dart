@@ -8,7 +8,17 @@ import 'package:news_app/widgets/vertical_spacing.dart';
 import 'package:page_transition/page_transition.dart';
 
 class ArticleWidget extends StatelessWidget {
-  const ArticleWidget({Key? key}) : super(key: key);
+  const ArticleWidget(
+      {Key? key,
+      required this.imageUrl,
+      required this.title,
+      required this.url,
+      required this.dateToShow,
+      required this.readingTime})
+      : super(key: key);
+
+  //initialize variable
+  final String imageUrl, title, url, dateToShow, readingTime;
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +31,17 @@ class ArticleWidget extends StatelessWidget {
         // It's used to create buttons, clickable containers, and other interactive elements in your app.
         child: GestureDetector(
           onTap: () {
-            //Navigate to the in app details screen instead of web view
-            Navigator.pushNamed(context, NewsDetailsScreen.routeName);
+            Navigator.push(
+              context,
+              //this is the package from flutter. For more details, read here: https://pub.dev/packages/page_transition
+              PageTransition(
+                  type: PageTransitionType.rightToLeft,
+                  child: NewsDetailsWebView(
+                    url: url,
+                  ),
+                  inheritTheme: true,
+                  ctx: context),
+            );
           },
           child: Stack(
             children: [
@@ -50,13 +69,14 @@ class ArticleWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                       //this is the flutter package. For more details, read here:https://pub.dev/packages/fancy_shimmer_image
                       child: FancyShimmerImage(
-                          height: size.height * 0.12,
-                          width: size.width * 0.23,
-                          boxFit: BoxFit.fill,
-                          //if the imageUrl doesn't work, it will throw this errorWidget
-                          errorWidget: Image.asset("assets/images/empty_image.png"),
-                          imageUrl:
-                              "https://cdn-2.tstatic.net/jatim/foto/bank/images/Chat-GPT-merupakan-produk-dari-OpenAI.jpg"),
+                        height: size.height * 0.12,
+                        width: size.width * 0.23,
+                        boxFit: BoxFit.fill,
+                        //if the imageUrl doesn't work, it will throw this errorWidget
+                        errorWidget:
+                            Image.asset("assets/images/empty_image.png"),
+                        imageUrl: imageUrl,
+                      ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -64,7 +84,7 @@ class ArticleWidget extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Title ' * 58,
+                          Text(title,
                               maxLines: 2,
                               textAlign: TextAlign.justify,
                               overflow: TextOverflow.ellipsis,
@@ -72,7 +92,7 @@ class ArticleWidget extends StatelessWidget {
                           const VerticalSpacing(8),
                           Align(
                               alignment: Alignment.topRight,
-                              child: Text('🕐 Reading Time',
+                              child: Text('🕐 $readingTime',
                                   style: smallTextStyle)),
                           FittedBox(
                             child: Row(
@@ -84,16 +104,21 @@ class ArticleWidget extends StatelessWidget {
                                       //this is the package from flutter. For more details, read here: https://pub.dev/packages/page_transition
                                       PageTransition(
                                           type: PageTransitionType.rightToLeft,
-                                          child: const NewsDetailsWebView(),
+                                          child: NewsDetailsWebView(
+                                            url: url,
+                                          ),
                                           inheritTheme: true,
                                           ctx: context),
                                     );
                                   },
-                                  icon: Icon(Icons.link),
+                                  icon: const Icon(Icons.link),
                                   color: Colors.blue[800],
                                 ),
-                                Text('20/2/2023 ' * 2,
-                                    maxLines: 1, style: smallTextStyle),
+                                Text(
+                                  dateToShow,
+                                  maxLines: 1,
+                                  style: smallTextStyle,
+                                ),
                               ],
                             ),
                           )

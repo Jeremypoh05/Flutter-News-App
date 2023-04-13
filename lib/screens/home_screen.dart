@@ -1,21 +1,25 @@
+import 'dart:developer';
+
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:news_app/consts/vars.dart';
 import 'package:news_app/inner_screens/search_screen.dart';
+import 'package:news_app/services/news.api.dart';
 import 'package:news_app/services/utils.dart';
 import 'package:news_app/widgets/drawer_widget.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
-import 'package:news_app/provider/theme_provider.dart';
-import 'package:news_app/widgets/loading_widget.dart';
 import 'package:news_app/widgets/tabs.dart';
 import 'package:news_app/widgets/top_trending.dart';
 import 'package:news_app/widgets/vertical_spacing.dart';
 import 'package:page_transition/page_transition.dart';
 
+import '../models/news_model.dart';
 import '../widgets/articles_widget.dart';
+import '../widgets/empty_screen.dart';
+import '../widgets/loading_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -31,11 +35,27 @@ class _HomeScreenState extends State<HomeScreen> {
   int currentPageIndex = 0;
   String sortBy = SortByEnum.publishedAt.name;
 
+  //"didChangeDependencies" method is a built-in method in Flutter that is called whenever the state of a widget changes.
+  //In this example, the method is used to call the "getNewsList" method
+  // The purpose of calling this package in this way is to retrieve the news articles as soon as the widget is loaded, so that the articles can be displayed in the widget's UI.
+  // @override
+  // void didChangeDependencies() {
+  //   getNewsList();
+  //   super.didChangeDependencies();
+  // }
+
+  //The getNewsList() function is used to fetch news articles from the NewsAPI service.
+  // It calls the getAllNews() function from the NewsAPIServices class and waits for it to complete before returning the newsList.
+  //*fetching AllNews*
+  Future<List<NewsModel>> getNewsList() async {
+    List<NewsModel> newsList = await NewsAPIServices.getAllNews();
+    return newsList;
+  }
+
   @override
   Widget build(BuildContext context) {
     //creates an instance of the Utils class with the current BuildContext as a parameter
-    // and gets the current color scheme and screen size using the getColor getter method and getScreenSize
-    // from the ThemeProvider provider.
+    // and gets the current color scheme and screen size using the getColor getter method and getScreenSize from the ThemeProvider provider.
     final size = Utils(context).getScreenSize;
     final Color color = Utils(context).getColor;
 
@@ -55,15 +75,15 @@ class _HomeScreenState extends State<HomeScreen> {
           actions: [
             IconButton(
               onPressed: () {
-                  Navigator.push(
-                    context,
-                    //this is the package from flutter. For more details, read here: https://pub.dev/packages/page_transition
-                    PageTransition(
-                        type: PageTransitionType.rightToLeft,
-                        child: const SearchScreen(),
-                        inheritTheme: true,
-                        ctx: context),
-                  );
+                Navigator.push(
+                  context,
+                  //this is the package from flutter. For more details, read here: https://pub.dev/packages/page_transition
+                  PageTransition(
+                      type: PageTransitionType.rightToLeft,
+                      child: const SearchScreen(),
+                      inheritTheme: true,
+                      ctx: context),
+                );
               },
               icon: const Icon(IconlyLight.search),
             )
@@ -213,31 +233,73 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-              //if newsType is allNews, show the ArticleWidget which has been create at articles_widget.dart
-              if (newsType == NewsType.allNews)
-                Expanded(
-                  child: ListView.builder(
-                      itemCount: 10, //display 10 articles
-                      itemBuilder: (context, index) {
-                        return const ArticleWidget();
-                      }),
-                ),
-              //if newsType is topTrending, show the TopTrendingWidget which has been create at top_trending.dart
-              if (newsType == NewsType.topTrending)
-                SizedBox(
-                  height: size.height * 0.6,
-                  child: Swiper(
-                      autoplay: true,
-                      autoplayDelay: 7000,
-                      itemWidth: size.width * 0.85,
-                      viewportFraction: 0.9,
-                      // layout: SwiperLayout.STACK,
-                      //viewPort become small a bit
-                      itemCount: 5,
-                      itemBuilder: (context, index) {
-                        return const TopTrendingWidget();
-                      }),
-                ),
+              //FutureBuilder widget is used to asynchronously fetch and display the news articles.
+              FutureBuilder<List<NewsModel>>(
+                //future property is set to the getNewsList() function, which returns a List of NewsModel objects.
+                  future: getNewsList(),
+                  //In the builder callback, it checks the snapshot object's connectionState to see if the data is still loading,
+                  // and returns a loading widget if it is. If there is an error, it returns an error widget. If the data is null, it returns an empty news widget
+                  builder: ((context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return newsType == NewsType.allNews
+                          ? LoadingWidget(newsType: newsType)
+                          : Expanded(child: LoadingWidget(newsType: newsType));
+                    } else if (snapshot.hasError) {
+                      return Expanded(
+                        child: EmptyNewsWidget(
+                          text: "${snapshot.error}",
+                          imagePath: 'assets/images/no_news.png',
+                        ),
+                      );
+                    } else if (snapshot.data == null) {
+                      return const Expanded(
+                        child: EmptyNewsWidget(
+                          text: "No news found",
+                          imagePath: 'assets/images/no_news.png',
+                        ),
+                      );
+                    }
+
+                    //If the data is loaded successfully, it checks the newsType to determine which widget to display.
+                    // If it is NewsType.allNews, it returns a ListView.builder widget to display a list of articles.
+                    // If it is not, it returns a Swiper widget to display the top trending articles.
+                    return newsType == NewsType.allNews
+                        ? Expanded(
+                            child: ListView.builder(
+                              //sets the itemCount to the length of the snapshot.data,
+                              // and returns an ArticleWidget for each article.
+                            itemCount: snapshot.data!.length,
+                                itemBuilder: (context, index) {
+                                  return ArticleWidget(
+                                    //These properties are retrieved from the snapshot object, which represents
+                                    // the asynchronous data returned by the future property of the FutureBuilder widget.
+                                    // The index parameter is used to specify the index of the news article to be displayed.
+                                    // !means non null, so the data returned by the Future object is non-null and can be accessed safely.
+                                    imageUrl: snapshot.data![index].urlToImage,
+                                    dateToShow: snapshot.data![index].dateToShow,
+                                    readingTime: snapshot.data![index].readingTimeText,
+                                    title: snapshot.data![index].title,
+                                    url: snapshot.data![index].url,
+                                  );
+                                }),
+                          )
+                        : SizedBox(
+                            height: size.height * 0.6,
+                            child: Swiper(
+                                autoplay: true,
+                                autoplayDelay: 7000,
+                                itemWidth: size.width * 0.85,
+                                viewportFraction: 0.9,
+                                // layout: SwiperLayout.STACK,
+                                //viewPort become small a bit
+                                itemCount: 5,
+                                itemBuilder: (context, index) {
+                                  return TopTrendingWidget(
+                                    url: snapshot.data![index].url,
+                                  );
+                                }),
+                          );
+                  })),
               //LoadingWidget(newsType: newsType),
               // LoadingWidget(),
             ],

@@ -7,7 +7,11 @@ import '../inner_screens/news_details_webview.dart';
 import '../services/utils.dart';
 
 class TopTrendingWidget extends StatelessWidget {
-  const TopTrendingWidget({Key? key}) : super(key: key);
+  const TopTrendingWidget({Key? key, required this.url}) : super(key: key);
+
+  //initialize url variable
+  //this url will
+  final String url;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +64,7 @@ class TopTrendingWidget extends StatelessWidget {
                           //this is the package from flutter. For more details, read here: https://pub.dev/packages/page_transition
                           PageTransition(
                               type: PageTransitionType.rightToLeft,
-                              child: const NewsDetailsWebView(),
+                              child:NewsDetailsWebView(url: url),
                               inheritTheme: true,
                               ctx: context),
                         );

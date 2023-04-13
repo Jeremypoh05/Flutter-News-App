@@ -10,7 +10,10 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class NewsDetailsWebView extends StatefulWidget {
-  const NewsDetailsWebView({Key? key}) : super(key: key);
+  const NewsDetailsWebView({Key? key, required this.url}) : super(key: key);
+
+  //initialize url variable
+  final String url;
 
   @override
   State<NewsDetailsWebView> createState() => _NewsDetailsWebViewState();
@@ -22,10 +25,6 @@ class _NewsDetailsWebViewState extends State<NewsDetailsWebView> {
 
   //This is a variable of type double that will hold the current progress of the web view's page loading progress. It is initially set to 0.0.
   double _progress = 0.0;
-
-  //initialize url variable
-  final url =
-      "https://appsamurai.com/blog/your-complete-guide-to-mobile-news-category/";
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +61,7 @@ class _NewsDetailsWebViewState extends State<NewsDetailsWebView> {
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             elevation: 1,
             centerTitle: true,
-            title: Text("URL", style: TextStyle(color: color)),
+            title: Text(widget.url, style: TextStyle(color: color)),
             actions: [
               IconButton(
                   onPressed: () async {
@@ -86,7 +85,7 @@ class _NewsDetailsWebViewState extends State<NewsDetailsWebView> {
               Expanded(
                 child: WebView(
                   //The initial URL to load in the web view.
-                  initialUrl: url,
+                  initialUrl: widget.url,
                   zoomEnabled: true,
                   //Whether zooming is enabled or not.
                   //A callback function that is called whenever the progress of the web view's page loading changes.
@@ -165,7 +164,7 @@ class _NewsDetailsWebViewState extends State<NewsDetailsWebView> {
                     function: () async {
                       try {
                         //This is flutter package. For more details, read here: https://pub.dev/packages/share_plus
-                        await Share.share('url', subject: 'Look what I made!');
+                        await Share.share(widget.url, subject: 'Look what I made!');
                       } catch (error) {
                         //this method is an alertDialogBox which can be found in global_methods_dart (dynamic)
                         GlobalMethods.errorDialog(errorMessage: error.toString(), context: context);
@@ -179,8 +178,8 @@ class _NewsDetailsWebViewState extends State<NewsDetailsWebView> {
                       // The Uri.parse() method is used to create a Uri object from a string representation of a URI.
                       //By passing Uri.parse(url) as an argument to launchUrl(), the url string is parsed into a Uri object,
                       // which is then used to launch the URL in the browser.
-                      if (!await launchUrl(Uri.parse(url))) {
-                        throw Exception('Could not launch $url');
+                      if (!await launchUrl(Uri.parse(widget.url))) {
+                        throw Exception('Could not launch ${widget.url}');
                       }
                     }),
                 ListTilesWidget(

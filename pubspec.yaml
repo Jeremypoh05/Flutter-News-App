@@ -41,6 +41,7 @@ dependencies:
   page_transition: ^2.0.9
   flutter_staggered_grid_view: ^0.6.2
   webview_flutter: ^3.0.4
+  reading_time: ^2.0.0
 
   #social
   share_plus: ^6.3.1
@@ -49,6 +50,10 @@ dependencies:
   #Management
   shared_preferences: ^2.0.20 # is a plugin in Flutter that allows you to store data in the form of key-value pairs on the device. The data is stored persistently, meaning that it will still be available even if the app is closed or the device is restarted.
   provider: ^6.0.5 #state management library that allows you to easily manage the state of your application.(stores and provides you with state or data)
+  intl: ^0.18.0
+
+  #Rest API
+  http: ^0.13.5
 
 dev_dependencies:
   flutter_test:
