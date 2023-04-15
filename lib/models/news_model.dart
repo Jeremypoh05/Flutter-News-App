@@ -1,10 +1,15 @@
 // " NewsModel" class which represents a news article.
 // The purpose of this class is to provide a way to convert JSON data (which is a common format for exchanging data on the web)
 // into an instance of the NewsModel class, and vice versa.
+import 'package:flutter/material.dart';
 import 'package:news_app/services/global_methods.dart';
 import 'package:reading_time/reading_time.dart';
 
-class NewsModel {
+//ChangeNotifier is a way to make the NewsModel class a provider in Flutter,
+// meaning that it can notify its listeners when its state changes.
+//it capable of notifying its listeners about changes to its state.
+//commonly used for classes that manage some kind of data in a Flutter app, such as a user profile, shopping cart
+class NewsModel with ChangeNotifier{
   //several properties, which represent different attributes of a news article.
   String newsId,
       sourceName,

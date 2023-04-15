@@ -1,6 +1,8 @@
 //Packages
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/inner_screens/blog_details.dart';
+import 'package:news_app/provider/news_provider.dart';
 import 'package:provider/provider.dart';
 
 //Consts
@@ -11,9 +13,14 @@ import 'package:news_app/provider/theme_provider.dart';
 //screens
 import 'package:news_app/screens/home_screen.dart';
 
-void main() {
+import 'firebase_options.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MyApp());
 }
+
 
 class MyApp extends StatefulWidget {
   MyApp({super.key});
@@ -45,7 +52,11 @@ class _MyAppState extends State<MyApp> {
         //This provider is used to manage the app's state using the themeChangeProvider instance of DarkThemeProvider class.
         ChangeNotifierProvider(create: (_) {
           return themeChangeProvider;
-        })
+        }),
+        //By using ChangeNotifierProvider, the NewsProvider can be accessed from anywhere in the app
+        // using the Provider.of<NewsProvider>(context) method, which provides access to the instance of
+        // the NewsProvider class created by the ChangeNotifierProvider.
+        ChangeNotifierProvider(create: (_) => NewsProvider()),
       ],
       child:
       //Consumer widget listens to the changes in the app's state and

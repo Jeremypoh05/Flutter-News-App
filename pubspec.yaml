@@ -54,6 +54,9 @@ dependencies:
 
   #Rest API
   http: ^0.13.5
+  firebase_core: ^2.9.0
+  firebase_auth: ^4.2.2
+  cloud_firestore: ^4.5.1
 
 dev_dependencies:
   flutter_test:
