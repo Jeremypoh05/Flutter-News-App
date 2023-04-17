@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:news_app/consts/vars.dart';
+import 'package:news_app/models/bookmarks.model.dart';
 import 'package:news_app/provider/news_provider.dart';
 import 'package:news_app/widgets/vertical_spacing.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import '../provider/bookmarks_provider.dart';
 import '../services/global_methods.dart';
 import '../services/utils.dart';
 
@@ -21,6 +23,35 @@ class NewsDetailsScreen extends StatefulWidget {
 }
 
 class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
+  //initialized
+  bool isInBookmark = false;
+  String? publishedAt;
+  dynamic currentBookmark;
+
+  @override
+  void didChangeDependencies() {
+    //retrieves the value of the publishedAt argument passed to the current route using ModalRoute.of(context)!.settings.arguments.
+    //The ! operator is used to assert that the ModalRoute and arguments are not null.
+    publishedAt = ModalRoute.of(context)!.settings.arguments as String;
+    //calling the getBookMarkList getter method on an instance of the BookmarksProvider class,
+    // which is retrieved from the provider using the Provider.of method.
+    //context parameter is required to retrieve the provider instance from the widget tree.
+    final List<BookmarksModel> bookmarkList =
+        Provider.of<BookmarksProvider>(context).getBookMarkList;
+    if (bookmarkList.isEmpty) {
+      return;
+    }
+    currentBookmark = bookmarkList
+        .where((element) => element.publishedAt == publishedAt)
+        .toList();
+    if(currentBookmark.isEmpty){
+      isInBookmark = false;
+    }else{
+      isInBookmark = true;
+    }
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     //creates an instance of the Utils class with the current BuildContext as a parameter
@@ -30,9 +61,7 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
     // and is being managed by the nearest ancestor Provider widget in the widget tree.
     //Once we have obtained an instance of the NewsProvider class, we can access its properties and methods using the dot notation
     final newsProvider = Provider.of<NewsProvider>(context);
-    //retrieves the value of the publishedAt argument passed to the current route using ModalRoute.of(context)!.settings.arguments.
-    //The ! operator is used to assert that the ModalRoute and arguments are not null.
-    final publishedAt = ModalRoute.of(context)!.settings.arguments as String;
+    final bookmarksProvider = Provider.of<BookmarksProvider>(context);
     //initialize variable to access NewsProvider class's method(findByDate).
     final currentNews = newsProvider.findByDate(publishedAt: publishedAt);
 
@@ -104,7 +133,8 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
                     child: FancyShimmerImage(
                         boxFit: BoxFit.fill,
                         //if the imageUrl doesn't work, it will throw this errorWidget
-                        errorWidget: Image.asset("assets/images/empty_image.png"),
+                        errorWidget:
+                            Image.asset("assets/images/empty_image.png"),
                         imageUrl: currentNews.urlToImage),
                   ),
                 ),
@@ -144,16 +174,29 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () async {
+                        //check if isInBookmark is true,
+                        //calling the deleteBookmark method on the bookmarksProvider object and awaiting its completion.
+                        if (isInBookmark) {
+                          await bookmarksProvider.deleteBookmark(key: currentBookmark[0].bookmarkKey);
+                          //if not, addToBookmark method adds the newsModel object to the bookmarks list
+                          // by sending a POST request to the Firebase Realtime Database endpoint to add new data
+                        } else {
+                          await bookmarksProvider.addToBookmark(
+                              newsModel: currentNews);
+                        }
+                        //after delete or add bookmark, fetch the data again
+                        await bookmarksProvider.fetchBookmarks();
+                      },
                       child: Card(
                         elevation: 10,
                         shape: const CircleBorder(),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Icon(
-                            IconlyLight.bookmark,
+                            isInBookmark ? IconlyBold.bookmark : IconlyLight.bookmark,
                             size: 28,
-                            color: color,
+                            color: isInBookmark ? Colors.green : color,
                           ),
                         ),
                       ),
@@ -196,7 +239,6 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
     );
   }
 }
-
 
 //refactor a custom widget
 class TextContent extends StatelessWidget {

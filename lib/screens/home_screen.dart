@@ -203,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           paginationButtons(
                               function: () {
-                                if (currentPageIndex == 4) {
+                                if (currentPageIndex == 5) {
                                   //when currentPageIndex is zero, and the prev button is being clicked, nothing will happen
                                   return;
                                 }

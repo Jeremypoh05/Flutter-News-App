@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:news_app/inner_screens/bookmarks_screen.dart';
+import 'package:news_app/screens/home_screen.dart';
 import 'package:news_app/widgets/vertical_spacing.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -55,13 +56,23 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             ListTilesWidget(
               label: "Home",
               icon: IconlyBold.home,
-              function: () {},
+              function: () {
+                Navigator.pushReplacement(
+                  context,
+                  //this is the package from flutter. For more details, read here: https://pub.dev/packages/page_transition
+                  PageTransition(
+                      type: PageTransitionType.rightToLeft,
+                      child: const HomeScreen(),
+                      inheritTheme: true,
+                      ctx: context),
+                );
+              },
             ),
             ListTilesWidget(
               label: "Bookmark",
               icon: IconlyBold.bookmark,
               function: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   //this is the package from flutter. For more details, read here: https://pub.dev/packages/page_transition
                   PageTransition(

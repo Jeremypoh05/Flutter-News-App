@@ -29,20 +29,16 @@ class NewsProvider with ChangeNotifier {
     return newsList;
   }
 
-  //fetchAllNews method is a method that returns a future that resolves to a list of NewsModel objects.
-  //It fetches the news data using the NewsAPIServices.getAllNews() method,
-  // which is an asynchronous method that returns a list of NewsModel objects.
   Future<List<NewsModel>> searchNewsProvider({required String query}) async {
     newsList = await NewsAPIServices.searchNews(query: query);
     return newsList;
   }
 
-
   //The method searches for the first occurrence of a NewsModel object in the newsList list
   // where the publishedAt property of the object matches the publishedAt parameter passed to the method.
   //In other words, the method is used to find a specific NewsModel object
   // from a list of NewsModel objects based on its publishedAt property value.
-  NewsModel findByDate({required String publishedAt}){
+  NewsModel findByDate({required String? publishedAt}){
     return newsList.firstWhere((newsModel) => newsModel.publishedAt == publishedAt);
   }
 }

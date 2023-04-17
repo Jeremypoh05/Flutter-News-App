@@ -3,6 +3,7 @@ import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:news_app/consts/vars.dart';
 import 'package:news_app/inner_screens/blog_details.dart';
 import 'package:news_app/inner_screens/news_details_webview.dart';
+import 'package:news_app/models/bookmarks.model.dart';
 import 'package:news_app/models/news_model.dart';
 import 'package:news_app/services/utils.dart';
 import 'package:news_app/widgets/vertical_spacing.dart';
@@ -11,18 +12,19 @@ import 'package:provider/provider.dart';
 
 class ArticleWidget extends StatelessWidget {
   const ArticleWidget({
-    Key? key,
+    Key? key, this.isBookmark = false
   }) : super(key: key);
 
-  //initialize variable
-  //final String imageUrl, title, url, dateToShow, readingTime;
+  final bool isBookmark;
 
   @override
   Widget build(BuildContext context) {
     Size size = Utils(context).getScreenSize;
 
-    // retrieve an instance of the NewsModel class from the widget tree using the Provider.of method
-    final newsModelProvider = Provider.of<NewsModel>(context);
+    //hold either a BookmarksModel or a NewsModel instance depending on a boolean value isBookmark.
+    // If isBookmark is true, the newsModelProvider variable will hold the BookmarksModel instance, which is obtained by calling Provider.of<BookmarksModel>(context) method.
+    // If isBookmark is false, the newsModelProvider variable will hold the NewsModel instance, which is obtained by calling Provider.of<NewsModel>(context) method.
+    dynamic newsModelProvider = isBookmark ? Provider.of<BookmarksModel>(context) : Provider.of<NewsModel>(context);
     // --------- Additional notes ---------
     //newsModelProvider is a variable that holds an instance of the NewsModel class,
     // which is a ChangeNotifier class. By using newsModelProvider in front of "property's name",
