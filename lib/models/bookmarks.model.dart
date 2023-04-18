@@ -61,11 +61,10 @@ class BookmarksModel with ChangeNotifier {
     );
   }
 
-  //This method takes in a dynamic json object and a list of all keys allKeys as parameters.
+  //This method takes in a dynamic json object and a list of allKeys as parameters.
   // It maps each of the keys in allKeys to an instance of the BookmarksModel class using the fromJson method.
   // It returns a list of BookmarksModel objects.
   static List<BookmarksModel> bookmarksFromSnapshot({required dynamic json, required List allKeys}) {
-    // Add these logs
     print("bookmarksFromSnapshot called with json: $json");
     print("bookmarksFromSnapshot called with allKeys: $allKeys");
 

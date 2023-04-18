@@ -11,6 +11,8 @@ import '../services/news.api.dart';
 
 //ChangeNotifier is a special class that enables the class to notify its listeners when a change is made to its data.
 class BookmarksProvider with ChangeNotifier {
+
+  //stores the list of bookmarks
   List<BookmarksModel> bookmarkList = [];
 
   //By declaring getBookMarkList as a getter method, we can access the contents of bookmarkList

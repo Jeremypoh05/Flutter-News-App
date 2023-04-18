@@ -276,7 +276,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     // If it is NewsType.allNews, it returns a ListView.builder widget to display a list of articles.
                     // If it is not, it returns a Swiper widget to display the top trending articles.
                     return newsType == NewsType.allNews
-                        ? Expanded(
+                        ? Expanded(   
                             child: ListView.builder(
                                 //sets the itemCount to the length of the snapshot.data,
                                 // and returns an ArticleWidget for each article.

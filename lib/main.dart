@@ -17,14 +17,12 @@ import 'package:news_app/screens/home_screen.dart';
 
 import 'firebase_options.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(MyApp());
+void main() {
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  MyApp({super.key});
+  const MyApp({Key? key});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -42,12 +40,12 @@ class _MyAppState extends State<MyApp> {
   //fetch the current theme
   void getCurrentAppTheme() async {
     themeChangeProvider.setDarkTheme =
-        await themeChangeProvider.darkThemePrefs.getTheme();
+    await themeChangeProvider.darkThemePrefs.getTheme();
   }
 
   @override
   Widget build(BuildContext context) {
-    //allows us to provide multiple providers to the child widgets of the app. Here, we are providing only one provider, themeChangeProvider.
+    //allows us to provide multiple providers to the child widgets of the app.
     return MultiProvider(
       providers: [
         //This provider is used to manage the app's state using the themeChangeProvider instance of DarkThemeProvider class.
@@ -55,29 +53,28 @@ class _MyAppState extends State<MyApp> {
           return themeChangeProvider;
         }),
         //By using ChangeNotifierProvider, the NewsProvider and BookmarksProvider can be accessed from anywhere in the app
-        // using the Provider.of<NewsProvider>(context) method, which provides access to the instance of
         // the NewsProvider class created by the ChangeNotifierProvider.
         ChangeNotifierProvider(create: (_) => NewsProvider()),
         ChangeNotifierProvider(create: (_) => BookmarksProvider()),
       ],
-      child:
-          //Consumer widget listens to the changes in the app's state and
-          // rebuilds the UI whenever there is a change in the state.
-          // Here, it rebuilds the MaterialApp widget whenever the app theme changes.
-          Consumer<ThemeProvider>(builder: (context, themeProvider, child) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          //hide the initial app banner on screen
-          title: 'News App',
-          theme: Styles.themeData(themeProvider.getDarkTheme, context),
-          //property that sets the app's theme based on the value returned from the getCurrentAppTheme() method.
-          home: const HomeScreen(),
-          //sets the default home screen of the app to HomeScreen().
-          routes: {
-            NewsDetailsScreen.routeName: (context) => const NewsDetailsScreen(),
-          },
-        );
-      }),
+      child: Builder(
+        builder: (context) {
+          return Consumer<ThemeProvider>(builder: (context, themeProvider, child) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              //hide the initial app banner on screen
+              title: 'News App',
+              theme: Styles.themeData(themeProvider.getDarkTheme, context),
+              //property that sets the app's theme based on the value returned from the getCurrentAppTheme() method.
+              home: const HomeScreen(),
+              //sets the default home screen of the app to HomeScreen().
+              routes: {
+                NewsDetailsScreen.routeName: (context) => const NewsDetailsScreen(),
+              },
+            );
+          });
+        },
+      ),
     );
   }
 }

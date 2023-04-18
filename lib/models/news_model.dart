@@ -40,11 +40,9 @@ class NewsModel with ChangeNotifier{
 
   //this method is a special constructor that takes a dynamic object
   // (in this case, a JSON object) and returns an instance of the NewsModel class.
-  //This method maps the JSON object's properties to the corresponding properties of the NewsModel object.
   factory NewsModel.fromJson(dynamic json){
     //please check carefully the ["name here"] should be exactly same. May use Postman to check.
-
-    //initialize since we want to use these 3 properties for readingTimeText property.
+    //initialize since we want to use these properties for readingTimeText property.
     String title =  json["title"] ?? "";
     String content = json["content"] ?? "";
     String description = json["description"] ?? "";
@@ -53,7 +51,6 @@ class NewsModel with ChangeNotifier{
     if(json["publishedAt"] != null) {
       dateToShow = GlobalMethods.formattedDateText(json["publishedAt"]);
     }
-
     return NewsModel(newsId: json["source"]["id"] ?? "",
         sourceName: json["source"]["name"] ?? "",
         authorName: json["author"] ?? "",

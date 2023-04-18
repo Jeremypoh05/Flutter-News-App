@@ -9,10 +9,6 @@ class NewsProvider with ChangeNotifier {
 
   List<NewsModel> newsList = [];
 
-  List<NewsModel> get getNewsList {
-    return newsList;
-  }
-
   //fetchAllNews method is a method that returns a future that resolves to a list of NewsModel objects.
   //It fetches the news data using the NewsAPIServices.getAllNews() method,
   // which is an asynchronous method that returns a list of NewsModel objects.
